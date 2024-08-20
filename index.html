@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPhone Style Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #000;
+            color: white;
+            font-family: 'San Francisco', Arial, sans-serif;
+        }
+
+        .calculator {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 20px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .calculator .display {
+            height: 80px;
+            font-size: 3rem;
+            text-align: right;
+            padding-right: 20px;
+            border-radius: 10px;
+            background-color: #000;
+            line-height: 80px;
+            color: white;
+            margin-bottom: 20px;
+            word-wrap: break-word;
+        }
+
+        .calculator .btn {
+            font-size: 1.5rem;
+            border-radius: 50px;
+            height: 80px;
+            width: 80px;
+            margin: 5px;
+        }
+
+        .calculator .btn-orange {
+            background-color: #ff9500;
+            border: none;
+        }
+
+        .calculator .btn-grey {
+            background-color: #a5a5a5;
+            border: none;
+            color: black;
+        }
+
+        .calculator .btn-dark-grey {
+            background-color: #333;
+            border: none;
+        }
+
+        .history {
+            display: none;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #444;
+            background-color: #222;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-item .history-operation {
+            font-size: 1.2rem;
+            color: #ccc;
+        }
+
+        .history-item .history-result {
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .btn-history-toggle,
+        .btn-clear-history,
+        .btn-back-to-calculator {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background-color: #444;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            overflow: hidden;
+            font-size: 1.5rem;
+        }
+
+        .btn-history-toggle {
+            background-color: #007bff;
+        }
+
+        .btn-clear-history {
+            background-color: #d9534f;
+        }
+
+        .btn-back-to-calculator {
+            background-color: #28a745;
+        }
+
+        .btn-history-toggle i,
+        .btn-clear-history i,
+        .btn-back-to-calculator i {
+            font-size: 2rem;
+        }
+
+        @media (max-width: 600px) {
+            .calculator {
+                max-width: 100%;
+                padding: 10px;
+            }
+
+            .calculator .display {
+                font-size: 2rem;
+                height: 60px;
+            }
+
+            .calculator .btn {
+                font-size: 1.2rem;
+                height: 60px;
+                width: 60px;
+            }
+
+            .btn-history-toggle,
+            .btn-clear-history,
+            .btn-back-to-calculator {
+                padding: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="calculator">
+        <div id="display" class="display">0</div>
+        <button class="btn btn-history-toggle" onclick="toggleHistory()">
+            <i class="fas fa-history"></i>
+        </button>
+        <div id="calcView">
+            <div class="row">
+                <div class="col-3"><button class="btn btn-grey" onclick="clearDisplay()"><i
+                            class="fas fa-times-circle"></i></button></div>
+                <div class="col-3"><button class="btn btn-grey" onclick="toggleSign()"><i
+                            class="fas fa-plus-minus"></i></button></div>
+                <div class="col-3"><button class="btn btn-grey" onclick="inputPercent()"><i
+                            class="fas fa-percent"></i></button></div>
+                <div class="col-3"><button class="btn btn-orange" onclick="setOperator('/')"><i
+                            class="fas fa-divide"></i></button></div>
+            </div>
+            <div class="row">
+                <div class="col-3"><button class="btn btn-dark-grey" onclick="input('7')">7</button></div>
+                <div class="col-3"><button class="btn btn-dark-grey" onclick="input('8')">8</button></div>
+                <div class="col-3"><button class="btn btn-dark-grey" onclick="input('9')">9</button></div>
+                <div class="col-3"><button class="btn btn-orange" onclick="setOperator('*')"><i
+                            class="fas fa-times"></i></button></div>
+            </div>
+            <div class="row">
+                <div class="col-3"><button class="btn btn-dark-grey" onclick="input('4')">4</button></div>
+                <div class="col-3"><button class="btn btn-dark-grey" onclick="input('5')">5</button></div>
+                <div class="col-3"><button class="btn btn-dark-grey" onclick="input('6')">6</button></div>
+                <div class="col-3"><button class="btn btn-orange" onclick="setOperator('-')"><i
+                            class="fas fa-minus"></i></button></div>
+            </div>
+            <div class="row">
+                <div class="col-3"><button class="btn btn-dark-grey" onclick="input('1')">1</button></div>
+                <div class="col-3"><button class="btn btn-dark-grey" onclick="input('2')">2</button></div>
+                <div class="col-3"><button class="btn btn-dark-grey" onclick="input('3')">3</button></div>
+                <div class="col-3"><button class="btn btn-orange" onclick="setOperator('+')"><i
+                            class="fas fa-plus"></i></button></div>
+            </div>
+            <div class="row">
+                <div class="col-6"><button class="btn btn-dark-grey" onclick="input('0')"
+                        style="width: 180px;">0</button></div>
+                <div class="col-3"><button class="btn btn-dark-grey" onclick="input('.')"><i
+                            class="fas fa-dot-circle"></i></button></div>
+                <div class="col-3"><button class="btn btn-orange" onclick="calculate()"><i
+                            class="fas fa-equals"></i></button></div>
+            </div>
+        </div>
+        <div id="historyView" class="history">
+            <button class="btn btn-clear-history" onclick="clearHistory()">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+            <div id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        let displayValue = '0';
+        let currentOperator = null;
+        let firstOperand = null;
+        let waitingForSecondOperand = false;
+        let history = JSON.parse(localStorage.getItem('calculatorHistory')) || [];
+
+        function updateDisplay() {
+            document.getElementById('display').innerText = displayValue;
+        }
+
+        function input(digit) {
+            if (waitingForSecondOperand) {
+                displayValue = digit === '.' ? '0.' : digit;
+                waitingForSecondOperand = false;
+            } else {
+                if (displayValue === '0' && digit !== '.') {
+                    displayValue = digit;
+                } else {
+                    displayValue += digit;
+                }
+            }
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            displayValue = '0';
+            currentOperator = null;
+            firstOperand = null;
+            waitingForSecondOperand = false;
+            updateDisplay();
+        }
+
+        function toggleSign() {
+            displayValue = displayValue.charAt(0) === '-' ? displayValue.slice(1) : '-' + displayValue;
+            updateDisplay();
+        }
+
+        function inputPercent() {
+            displayValue = String(parseFloat(displayValue) / 100);
+            updateDisplay();
+        }
+
+        function setOperator(operator) {
+            if (currentOperator && !waitingForSecondOperand) {
+                calculate();
+            }
+            firstOperand = parseFloat(displayValue);
+            currentOperator = operator;
+            waitingForSecondOperand = true;
+            updateDisplay();
+        }
+
+        function calculate() {
+            if (currentOperator === null || waitingForSecondOperand) return;
+            const secondOperand = parseFloat(displayValue);
+            let result;
+            switch (currentOperator) {
+                case '+':
+                    result = firstOperand + secondOperand;
+                    break;
+                case '-':
+                    result = firstOperand - secondOperand;
+                    break;
+                case '*':
+                    result = firstOperand * secondOperand;
+                    break;
+                case '/':
+                    result = firstOperand / secondOperand;
+                    break;
+                default:
+                    return;
+            }
+            displayValue = `${parseFloat(result.toFixed(7))}`;
+            history.push({ operation: `${firstOperand} ${currentOperator} ${secondOperand}`, result: displayValue });
+            updateHistory();
+            localStorage.setItem('calculatorHistory', JSON.stringify(history));
+            currentOperator = null;
+            firstOperand = null;
+            waitingForSecondOperand = false;
+            updateDisplay();
+        }
+
+        function updateHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = history.map(item => `
+                <div class="history-item">
+                    <div class="history-operation">${item.operation}</div>
+                    <div class="history-result">${item.result}</div>
+                </div>
+            `).join('');
+        }
+
+        function clearHistory() {
+            history = [];
+            updateHistory();
+            localStorage.removeItem('calculatorHistory');
+        }
+
+        function toggleHistory() {
+            const calcView = document.getElementById('calcView');
+            const historyView = document.getElementById('historyView');
+            const toggleButton = document.querySelector('.btn-history-toggle');
+
+            if (calcView.style.display === 'none') {
+                calcView.style.display = 'block';
+                historyView.style.display = 'none';
+                toggleButton.innerHTML = '<i class="fas fa-history"></i>';
+            } else {
+                calcView.style.display = 'none';
+                historyView.style.display = 'block';
+                toggleButton.innerHTML = '<i class="fas fa-calculator"></i>';
+            }
+        }
+
+        // Initialize history on page load
+        updateHistory();
+
+        // Keyboard support
+        document.addEventListener('keydown', (event) => {
+            const key = event.key;
+
+            if (!isNaN(key) && key !== ' ') {
+                input(key);
+            } else if (key === '.') {
+                input(key);
+            } else if (key === 'Enter' || key === '=') {
+                calculate();
+            } else if (key === 'Escape' || key === 'Backspace') {
+                clearDisplay();
+            } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+                setOperator(key === '+' ? '+' : key === '-' ? '-' : key === '*' ? '*' : '/');
+            } else if (key === 'c') {
+                toggleSign();
+            } else if (key === '%') {
+                inputPercent();
+            }
+        });
+    </script>
+</body>
+
+</html>
